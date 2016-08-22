@@ -1,0 +1,48 @@
+{
+  "name": "rollup-plugin-vue2",
+  "version": "0.0.1",
+  "description": "Rollup plugin for Vue 2.0 components",
+  "main": "dist/rollup-plugin-vue2.common.js",
+  "jsnext": "dist/rollup-plugin-vue2.es.js",
+  "scripts": {
+    "build": "rollup -c -f cjs -o dist/rollup-plugin-vue2.common.js && rollup -c -o dist/rollup-plugin-vue2.es.js",
+    "dev": "rollup -cw -f cjs -o dist/rollup-plugin-vue2.common.js",
+    "test": "npm run lint && npm run build && npm run unit",
+    "lint": "standard rollup.config.js test/test.js src/**",
+    "unit": "cross-env NODE_ENV=production mocha test/test.js",
+    "prepublish": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thgh/rollup-plugin-vue2.git"
+  },
+  "keywords": [
+    "rollup-plugin",
+    "vue",
+    "vue2",
+    "template-compiler"
+  ],
+  "author": "Thomas Ghysels <info@thomasg.be>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thgh/rollup-plugin-vue2/issues"
+  },
+  "homepage": "https://github.com/thgh/rollup-plugin-vue2#readme",
+  "dependencies": {
+    "parse5": "^2.2.0",
+    "rollup-pluginutils": "^1.5.1",
+    "vue-template-compiler": "^2.0.0-rc.3"
+  },
+  "devDependencies": {
+    "cross-env": "^2.0.0",
+    "eslint-plugin-promise": "^2.0.1",
+    "eslint-plugin-standard": "^2.0.0",
+    "mocha": "^3.0.2",
+    "rollup": "^0.34.10",
+    "rollup-plugin-buble": "^0.13.0",
+    "standard": "^8.0.0-beta.5"
+  }
+}
