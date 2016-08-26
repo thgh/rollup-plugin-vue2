@@ -23,7 +23,7 @@ function toFunction (code) {
 function injectTemplate (script, template) {
   const matches = /(export default[^{]*\{)/g.exec(script)
   if (!matches) {
-    throw new Error('[rollup-plugin-vue] could not find place to inject template in script.')
+    throw new Error('[rollup-plugin-vue2] could not find place to inject template in script.')
   }
   const compiled = compiler.compile(template)
   return script.split(matches[1])
@@ -75,7 +75,7 @@ function checkLang (node) {
 
 export default function vueTransform (code, filePath) {
   // 1. Parse the file into an HTML tree
-  const fragment = parse5.parseFragment(code, { locationInfo: true })
+  const fragment = parse5.parseFragment(code)
 
   // 2. Walk through the top level nodes and check for their types
   const nodes = {}
