@@ -20,10 +20,6 @@ export default function vue2 (options = {}) {
     },
     transform (source, id) {
       if (!filter(id) || !id.endsWith('.vue')) {
-        if (id.endsWith('vue.common.js')) {
-          return source.replace(/process\.env\.VUE_ENV/g, process.env.VUE_ENV || '""')
-            .replace(/process\.env\.NODE_ENV/g, process.env.NODE_ENV || '""')
-        }
         return
       }
 
@@ -35,6 +31,11 @@ export default function vue2 (options = {}) {
       // Replace "with(this){" with something that works in strict mode
       // https://github.com/vuejs/vue-template-es2015-compiler/blob/master/index.js
       return js.replace(/with\(this\)/g, 'if(window.__VUE_WITH__)')
+    },
+    transformBundle (code) {
+      return code
+        .replace(/process\.env\.VUE_ENV/g, JSON.stringify(process.env.VUE_ENV || ''))
+        .replace(/process\.env\.NODE_ENV/g, JSON.stringify(process.env.NODE_ENV || ''))
     },
     ongenerate (opts, rendered) {
       // Revert "with(this){"
