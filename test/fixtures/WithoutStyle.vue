@@ -2,8 +2,8 @@
   <div>Component without script</div>
 </template>
 
-<style>
-body {
-  font-size: 2em;
+<script>
+export default {
+  props: ['name']
 }
-</style>
+</script>

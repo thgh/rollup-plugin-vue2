@@ -1,6 +1,6 @@
 <template>
   <main>
-    <hello :name="name"></hello>
+    <hello :name="name" v-if="uid && name">{{ uid && name }}</hello>
   </main>
 </template>
 
@@ -8,6 +8,7 @@
 import Hello from './Hello.vue'
 
 export default {
+  props: ['name'],
   components: {
     Hello
   }

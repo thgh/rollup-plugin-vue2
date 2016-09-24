@@ -21,15 +21,22 @@ function toFunction (code) {
  * @returns {string}
  */
 function injectTemplate (script, template) {
+  // Compile template
+  const compiled = compiler.compile(template)
+  const moduleFuncs = '\nrender: ' + toFunction(compiled.render) + ',' +
+    '\nstaticRenderFns: [' + compiled.staticRenderFns.map(toFunction).join(',') + ']'
+
+  // There is no script tag
+  if (!script || script.length < 20) {
+    return 'export default {' + moduleFuncs + '\n}'
+  }
+
+  // Inject in actual script
   const matches = /(export default[^{]*\{)/g.exec(script)
   if (!matches) {
     throw new Error('[rollup-plugin-vue2] could not find place to inject template in script.')
   }
-  const compiled = compiler.compile(template)
-  return script.split(matches[1])
-    .join(matches[1] +
-      '\nrender: ' + toFunction(compiled.render) + ',' +
-      '\nstaticRenderFns: [' + compiled.staticRenderFns.map(toFunction).join(',') + '],')
+  return script.split(matches[1]).join(matches[1] + moduleFuncs + ',')
 }
 
 /**
@@ -61,13 +68,8 @@ export default function vueTransform (code, id) {
     nodes[fragment.childNodes[i].nodeName] = fragment.childNodes[i]
   }
 
-  // Don't touch files that don't look like Vue components
-  if (!nodes.template && !nodes.script) {
-    throw new Error('There must be at least one script tag or one template tag per *.vue file.')
-  }
-
   // Process script
-  var js = parse5.serialize(nodes.script)
+  var js = nodes.script && parse5.serialize(nodes.script) || 'export default {\n}'
 
   // Precompile and inject Vue template
   if (nodes.template && nodes.template.content) {

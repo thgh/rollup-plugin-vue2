@@ -30,11 +30,18 @@ __&cross;__ No support for css compilation, but can trigger another build tool
 npm install --save-dev rollup-plugin-vue2
 ```
 
+**Warning**: rollup-plugin-vue2 will transform the style tags to imports. You need one of these plugins to handle these:
+
+- [rollup-plugin-css-only]
+- [rollup-plugin-postcss]
+- [rollup-plugin-sass]
+
 ## Usage
 Put `vue()` before any transpiler like Bublé or Babel
 ```js
 // rollup.config.js
 import vue from 'rollup-plugin-vue2';
+import css from 'rollup-plugin-css-only';
 import buble from 'rollup-plugin-buble';
 import nodeResolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
@@ -45,6 +52,7 @@ export default {
   dest: 'dist/bundle.js',
   plugins: [
     vue(),
+    css(),
     buble(),
     nodeResolve({ browser: true, jsnext: true, main: true }),
     commonjs(),
@@ -63,31 +71,6 @@ rollup -c
 # Development
 #  -w will watch for changes
 rollup -c -w
-```
-
-### Options
-
-There is only 1 option for now: `css`.
-By default the plugin will base the filename for the css on the bundle destination.
-
-```js
-vue({
-  // Filename to write all styles to
-  css: 'bundle.scss',
-
-  // Callback that will be called ongenerate with two arguments:
-  // - styles: the contents of all style tags combined: 'body { color: green }'
-  // - styleNodes: an array of style objects: [{lang: 'css', content: 'body { color: green }'}]
-  css: function (styles, styleNodes) {
-    writeFileSync('bundle.scss', styles)
-  },
-
-  // Disable any style output or callbacks
-  css: false,
-
-  // Default behaviour is to write all styles to the bundle destination where .js is replaced by .css
-  css: null
-})
 ```
 
 ## Changelog
@@ -131,6 +114,10 @@ The MIT License (MIT). Please see [License File](LICENSE) for more information.
 [link-author]: https://github.com/thgh
 [link-contributors]: ../../contributors
 [rollup-plugin-vue]: https://www.npmjs.com/package/rollup-plugin-vue
+[rollup-plugin-vue2]: https://www.npmjs.com/package/rollup-plugin-vue2
+[rollup-plugin-css-only]: https://www.npmjs.com/package/rollup-plugin-css-only
+[rollup-plugin-postcss]: https://www.npmjs.com/package/rollup-plugin-postcss
+[rollup-plugin-sass]: https://www.npmjs.com/package/rollup-plugin-sass
 [rollup-plugin-buble]: https://www.npmjs.com/package/rollup-plugin-buble
 [rollup-plugin-babel]: https://www.npmjs.com/package/rollup-plugin-babel
 [vue-template-compiler]: https://www.npmjs.com/package/vue-template-compiler

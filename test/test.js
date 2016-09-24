@@ -27,28 +27,67 @@ describe('rollup-plugin-vue2', function () {
 
       // Script and template
       var expected = read('expects/bundle.js')
-      assertEqualFile(result.code.replace(/\r/g, ''), expected, 'should output script')
+      assertEqualFile(expected, result.code.replace(/\r/g, ''), 'should output script')
 
       // Styles
-      var css = read('expects/bundle.css')
-      assertEqualFile(actualCss, css, 'should output style')
+      var expectedCss = read('expects/bundle.css')
+      assertEqualFile(expectedCss, actualCss, 'should output style')
     })
   })
 
-  // it('should handle components without script', function () {
-  //   return simpleRollup('WithoutScript.vue').then(function (bundle) {
-  //     var result = bundle.generate()
-  //     var expected = read('expects/without-script.js')
-  //     assertEqualFile(result.code, expected)
-  //   })
-  // })
+  it('should handle components with only template', function () {
+    return simpleRollup('OnlyTemplate.vue').then(function (bundle) {
+      var result = bundle.generate()
+      var expected = read('expects/OnlyTemplate.js')
+      assertEqualFile(expected, result.code)
+    })
+  })
 
-  // it('should handle components without template', function () {
-  //   return simpleRollup('WithoutTemplate.vue').then(function (bundle) {
-  //     var result = bundle.generate()
-  //     var expected = read('expects/without-template.js')
-  //     assertEqualFile(result.code, expected)
-  //   })
+  it('should handle components with only script', function () {
+    return simpleRollup('OnlyScript.vue').then(function (bundle) {
+      var result = bundle.generate()
+      var expected = read('expects/OnlyScript.js')
+      assertEqualFile(expected, result.code)
+    })
+  })
+
+  it('should handle components with only style', function () {
+    return simpleRollup('OnlyStyle.vue').then(function (bundle) {
+      var result = bundle.generate()
+      var expected = read('expects/OnlyStyle.js')
+      assertEqualFile(expected, result.code)
+    })
+  })
+
+  it('should handle components without style', function () {
+    return simpleRollup('WithoutStyle.vue').then(function (bundle) {
+      var result = bundle.generate()
+      var expected = read('expects/WithoutStyle.js')
+      assertEqualFile(expected, result.code)
+    })
+  })
+
+  it('should handle components without template', function () {
+    return simpleRollup('WithoutTemplate.vue').then(function (bundle) {
+      var result = bundle.generate()
+      var expected = read('expects/WithoutTemplate.js')
+      assertEqualFile(expected, result.code)
+    })
+  })
+
+  it('should handle components without script', function () {
+    return simpleRollup('WithoutScript.vue').then(function (bundle) {
+      var result = bundle.generate()
+      var expected = read('expects/WithoutScript.js')
+      assertEqualFile(expected, result.code)
+    })
+  })
+
+  // it('should fail to bundle components with template tag & render function', function () {
+  //   assert.throws(
+  //     () => simpleRollup('ConflictRender.vue'),
+  //     Error
+  //   )
   // })
 })
 
@@ -62,10 +101,13 @@ function assertEqualFile (a, b, c) {
 }
 
 // Assert equal except for line endings
-// function simpleRollup (fixture) {
-//   return rollup.rollup({
-//     format: 'cjs',
-//     entry: './fixtures/' + fixture,
-//     plugins: [vue({ css: false })]
-//   })
-// }
+function simpleRollup (fixture) {
+  return rollup.rollup({
+    format: 'cjs',
+    entry: './fixtures/' + fixture,
+    plugins: [
+      vue(),
+      css({ output: false })
+    ]
+  })
+}

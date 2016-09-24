@@ -10,8 +10,9 @@ staticRenderFns: [],
 }
 
 var App = {
-render: function(){with(this){return _h('main',[_h('hello',{attrs:{"name":name}})])}},
+render: function(){with(this){return _h('main',[(uid && name)?_h('hello',{attrs:{"name":name}},[_s(uid && name)]):_e()])}},
 staticRenderFns: [],
+  props: ['name'],
   components: {
     Hello
   }
