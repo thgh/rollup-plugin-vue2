@@ -1,5 +1,6 @@
 /* global describe, it */
 var vue = require('../')
+var css = require('rollup-plugin-css')
 var assert = require('assert')
 var fs = require('fs')
 var rollup = require('rollup')
@@ -9,15 +10,18 @@ process.chdir(__dirname)
 
 describe('rollup-plugin-vue2', function () {
   it('should rollup entry.js', function () {
-    var actualCss
+    var actualCss = ''
     return rollup.rollup({
       format: 'cjs',
       entry: './fixtures/entry.js',
-      plugins: [vue({
-        css (css) {
-          actualCss = css
-        }
-      })]
+      plugins: [
+        vue(),
+        css({
+          output (out) {
+            actualCss = out
+          }
+        })
+      ]
     }).then(function (bundle) {
       var result = bundle.generate()
 

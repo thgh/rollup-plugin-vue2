@@ -32,17 +32,17 @@
   },
   "homepage": "https://github.com/thgh/rollup-plugin-vue2#readme",
   "dependencies": {
-    "parse5": "^2.2.0",
-    "rollup-pluginutils": "^1.5.1",
-    "vue-template-compiler": "^2.0.0-rc.3"
+    "parse5": "^2.2.1",
+    "rollup-pluginutils": "^1.5.2",
+    "vue-template-compiler": "^2.0.0-rc.7"
   },
   "devDependencies": {
-    "cross-env": "^2.0.0",
+    "cross-env": "^2.0.1",
     "eslint-plugin-promise": "^2.0.1",
     "eslint-plugin-standard": "^2.0.0",
     "mocha": "^3.0.2",
-    "rollup": "^0.34.10",
-    "rollup-plugin-buble": "^0.13.0",
-    "standard": "^8.0.0-beta.5"
+    "rollup": "^0.36.0",
+    "rollup-plugin-buble": "^0.14.0",
+    "standard": "^8.1.0"
   }
 }

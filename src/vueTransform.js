@@ -33,28 +33,6 @@ function injectTemplate (script, template) {
 }
 
 /**
- * @param {Node} node
- * @param {string} filePath
- * @param {string} content
- * @param {string} template
- */
-function processScript (script, filePath, content, template) {
-  script = parse5.serialize(script)
-
-  // Precompile vue template
-  if (template && template.content) {
-    template = parse5.serialize(template.content)
-    template = template.replace(/&amp;&amp;/g, '&&')
-    script = injectTemplate(script, template)
-    if (template.errors) {
-      log(filePath)
-      template.errors.forEach(warn)
-    }
-  }
-  return script
-}
-
-/**
  * Check the lang attribute of a parse5 node.
  *
  * @param {Node} node
@@ -73,29 +51,43 @@ function checkLang (node) {
   return undefined
 }
 
-export default function vueTransform (code, filePath) {
-  // 1. Parse the file into an HTML tree
+export default function vueTransform (code, id) {
+  // Parse the file into an HTML tree
   const fragment = parse5.parseFragment(code)
 
-  // 2. Walk through the top level nodes and check for their types
+  // Walk through the top level nodes and check for their types
   const nodes = {}
   for (let i = fragment.childNodes.length - 1; i >= 0; i--) {
     nodes[fragment.childNodes[i].nodeName] = fragment.childNodes[i]
   }
 
-  // 3. Don't touch files that don't look like Vue components
+  // Don't touch files that don't look like Vue components
   if (!nodes.template && !nodes.script) {
     throw new Error('There must be at least one script tag or one template tag per *.vue file.')
   }
 
-  return {
-    // 4. Process script & template
-    js: processScript(nodes.script, filePath, code, nodes.template),
+  // Process script
+  var js = parse5.serialize(nodes.script)
 
-    // 5. Process styles
-    css: nodes.style && {
-      content: parse5.serialize(nodes.style),
-      lang: checkLang(nodes.style)
+  // Precompile and inject Vue template
+  if (nodes.template && nodes.template.content) {
+    let template = parse5.serialize(nodes.template.content)
+    template = template.replace(/&amp;&amp;/g, '&&')
+    js = injectTemplate(js, template)
+    if (template.errors) {
+      log(id)
+      template.errors.forEach(warn)
     }
   }
+
+  // Import css as a module
+  // Example: import "./src/App.vue.component.css"
+  var css
+  if (nodes.style) {
+    let lang = checkLang(nodes.style) || 'css'
+    js = 'import ' + JSON.stringify(id + '.component.' + lang) + '\n' + js
+    css = parse5.serialize(nodes.style)
+  }
+
+  return { js, css }
 }

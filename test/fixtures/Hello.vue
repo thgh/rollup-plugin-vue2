@@ -12,3 +12,9 @@ export default {
   }
 }
 </script>
+
+<style>
+html {
+  color: green;
+}
+</style>
