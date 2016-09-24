@@ -21,8 +21,8 @@ export default function vue2 (options = {}) {
     transform (source, id) {
       if (!filter(id) || !id.endsWith('.vue')) {
         if (id.endsWith('vue.common.js')) {
-          return source.replace(/process\.env\.VUE_ENV/g, JSON.stringify(process.env.VUE_ENV))
-            .replace(/process\.env\.NODE_ENV/g, JSON.stringify(process.env.NODE_ENV))
+          return source.replace(/process\.env\.VUE_ENV/g, process.env.VUE_ENV || '""')
+            .replace(/process\.env\.NODE_ENV/g, process.env.NODE_ENV || '""')
         }
         return
       }
