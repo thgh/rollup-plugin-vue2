@@ -7,6 +7,10 @@ export default function vue2 (options = {}) {
 
   return {
     name: 'vue2',
+    options (options) {
+      options.useStrict = false
+      return options
+    },
     resolveId (id) {
       if (id.indexOf('.vue.component.') !== -1) {
         return id
