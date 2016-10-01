@@ -1,5 +1,6 @@
 import { createFilter } from 'rollup-pluginutils'
 import vueTransform from './vueTransform'
+import MagicString from 'magic-string'
 
 export default function vue2 (options = {}) {
   const filter = createFilter(options.include, options.exclude)
@@ -22,28 +23,38 @@ export default function vue2 (options = {}) {
         return styles[id] || ''
       }
     },
-    transform (source, id) {
+    transform (code, id) {
       if (!filter(id) || !id.endsWith('.vue')) {
         return
       }
 
-      const { js, css } = vueTransform(source, id)
+      code = vueTransform(code, id)
 
       // Map of every stylesheet
-      styles[id] = css
+      styles[id] = code.css
 
-      // Replace "with(this){" with something that works in strict mode
-      // https://github.com/vuejs/vue-template-es2015-compiler/blob/master/index.js
-      return js.replace(/with\(this\)/g, 'if(window.__VUE_WITH__)')
+      return code
     },
     transformBundle (code) {
-      return code
-        .replace(/process\.env\.VUE_ENV/g, JSON.stringify(process.env.VUE_ENV || ''))
-        .replace(/process\.env\.NODE_ENV/g, JSON.stringify(process.env.NODE_ENV || ''))
+      const s = new MagicString(code)
+      magicReplace(s, /process\.env\.VUE_ENV/g, 19, JSON.stringify(process.env.VUE_ENV || ''))
+      magicReplace(s, /process\.env\.NODE_ENV/g, 20, JSON.stringify(process.env.NODE_ENV || ''))
+      return {
+        code: s.toString(),
+        map: s.generateMap({ hires: true })
+      }
     },
     ongenerate (opts, rendered) {
       // Revert "with(this){"
       rendered.code = rendered.code.replace(/if\s*\(window.__VUE_WITH__\)/g, 'with(this)')
     }
+  }
+}
+
+function magicReplace (s, needle, needlen, replacement) {
+  var match
+  /* eslint-disable */
+  while (match = needle.exec(s.original)) {
+    s.overwrite(match.index, match.index + needlen, replacement)
   }
 }
