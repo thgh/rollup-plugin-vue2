@@ -3,14 +3,13 @@ import vueTransform from './vueTransform'
 import MagicString from 'magic-string'
 
 export default function vue2 (options = {}) {
-  const filter = createFilter(options.include, options.exclude)
+  const filter = createFilter(options.include || '**/*.vue', options.exclude)
   const styles = {}
 
   return {
     name: 'vue2',
     options (options) {
       options.useStrict = false
-      return options
     },
     resolveId (id) {
       if (id.indexOf('.vue.component.') !== -1) {
@@ -24,7 +23,10 @@ export default function vue2 (options = {}) {
       }
     },
     transform (code, id) {
-      if (!filter(id) || !id.endsWith('.vue')) {
+      if (id.endsWith('vue.common.js')) {
+        return vueCommon(code)
+      }
+      if (!filter(id)) {
         return
       }
 
@@ -35,15 +37,6 @@ export default function vue2 (options = {}) {
 
       return code
     },
-    transformBundle (code) {
-      const s = new MagicString(code)
-      magicReplace(s, /process\.env\.VUE_ENV/g, 19, JSON.stringify(process.env.VUE_ENV || ''))
-      magicReplace(s, /process\.env\.NODE_ENV/g, 20, JSON.stringify(process.env.NODE_ENV || ''))
-      return {
-        code: s.toString(),
-        map: s.generateMap({ hires: true })
-      }
-    },
     ongenerate (opts, rendered) {
       // Revert "with(this){"
       rendered.code = rendered.code.replace(/if\s*\(window.__VUE_WITH__\)/g, 'with(this)')
@@ -51,10 +44,13 @@ export default function vue2 (options = {}) {
   }
 }
 
-function magicReplace (s, needle, needlen, replacement) {
-  var match
-  /* eslint-disable */
-  while (match = needle.exec(s.original)) {
-    s.overwrite(match.index, match.index + needlen, replacement)
+function vueCommon (code) {
+  code = code
+    .replace(/process\.env\.VUE_ENV/g, JSON.stringify(process.env.VUE_ENV || ''))
+    .replace(/process\.env\.NODE_ENV/g, JSON.stringify(process.env.NODE_ENV || ''))
+
+  return {
+    code: code,
+    map: { mappings: '' }
   }
 }
