@@ -1,6 +1,5 @@
 import { createFilter } from 'rollup-pluginutils'
 import vueTransform from './vueTransform'
-import MagicString from 'magic-string'
 
 export default function vue2 (options = {}) {
   const filter = createFilter(options.include || '**/*.vue', options.exclude)
