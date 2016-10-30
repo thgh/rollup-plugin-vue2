@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-vue2",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Rollup plugin for Vue 2.0 components",
   "main": "dist/rollup-plugin-vue2.common.js",
   "jsnext": "dist/rollup-plugin-vue2.es.js",
@@ -32,18 +32,18 @@
   },
   "homepage": "https://github.com/thgh/rollup-plugin-vue2#readme",
   "dependencies": {
-    "parse5": "^2.2.2",
+    "parse5": "^2.2.3",
     "rollup-pluginutils": "^1.5.2",
-    "vue-template-compiler": "^2.0.0"
+    "vue-template-compiler": "^2.0.3"
   },
   "devDependencies": {
-    "cross-env": "^3.0.0",
-    "eslint-plugin-promise": "^2.0.1",
+    "cross-env": "^3.1.3",
+    "eslint-plugin-promise": "^3.3.0",
     "eslint-plugin-standard": "^2.0.1",
-    "mocha": "^3.1.0",
-    "rollup": "^0.36.1",
+    "mocha": "^3.1.2",
+    "rollup": "^0.36.3",
     "rollup-plugin-buble": "^0.14.0",
     "rollup-plugin-css-only": "0.0.4",
-    "standard": "^8.3.0"
+    "standard": "^8.5.0"
   }
 }
