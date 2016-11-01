@@ -5,25 +5,25 @@ All notable changes to `rollup-plugin-vue2` will be documented in this file.
 ## [Unreleased]
 
 ## [0.3.0] - 2016-11-01
-## Changed
+### Changed
 - Replace parse5 by vue-template-compiler from [jetiny](https://github.com/jetiny).
 
 ## [0.2.0] - 2016-09-30
-## Added
+### Added
 - Sourcemap support
 
 ## [0.1.0] - 2016-09-28
-## Changed
+### Changed
 - Force strict mode to avoid trouble with other formats.
 
 ## [0.0.8] - 2016-09-24
-## Added
+### Added
 - Add support for Vue components without script and/or template.
 
-## Changed
+### Changed
 - Try fixing compatibility with uglifyjs.
 
-## Removed
+### Removed
 - Option `css` is removed. Styles are transformed into an `import` statement.
 
 ## [0.0.1] - 2016-08-23
