@@ -109,6 +109,7 @@ To get it running:
 
 - [Thomas Ghysels](https://github.com/thgh) - Support for &lt;style>, Bublé & Vue 2.0
 - [Rahul Kadyan](https://github.com/znck) - Author of the original [rollup-plugin-vue]
+- [jetiny](https://github.com/jetiny) - Implement component parser of vue-template-compiler
 - [All Contributors][link-contributors]
 
 ## License
