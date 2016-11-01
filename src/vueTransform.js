@@ -1,36 +1,23 @@
-import parse5 from 'parse5'
 import compiler from 'vue-template-compiler'
 import MagicString from 'magic-string'
 
-import { warn } from './log.js'
-
 export default function vueTransform (code, id) {
-  const nodes = toNodes(code)
+  const nodes = compiler.parseComponent(code)
   const s = new MagicString(code)
-
-  // Process script
-  var scriptOffset
-  var exportOffset
+  let exportOffset
   if (nodes.script) {
-    var js = parse5.serialize(nodes.script)
-    js = code.indexOf('\r') !== -1 ? js.replace(/\n/g, '\r\n') : js
-    scriptOffset = s.toString().indexOf(js)
-    exportOffset = getExportOffset(s, scriptOffset)
-
-    if (scriptOffset >= exportOffset) {
-      warn(id)
-      throw new Error('[rollup-plugin-vue2] could not find place to inject template in script.')
+    s.remove(nodes.script.end, s.original.length)
+    s.remove(0, nodes.script.start)
+    exportOffset = s.toString().search(/export default[^{]*\{/g)
+    if (exportOffset >= 0) {
+      exportOffset += nodes.script.start + 16
     }
-
-    s.remove(0, scriptOffset)
-    s.remove(scriptOffset + js.length, s.original.length)
-  } else {
-    scriptOffset = 0
+  }
+  if (!(exportOffset > 16)) {
     exportOffset = 16
     s.overwrite(0, 16, 'export default {')
     s.overwrite(16, code.length, '\nstub: 1\n}')
   }
-
   // Precompile and inject Vue template
   if (nodes.template && nodes.template.content) {
     injectTemplate(s, nodes.template.content, exportOffset)
@@ -38,11 +25,13 @@ export default function vueTransform (code, id) {
 
   // Import css as a module
   // Example: import "./src/App.vue.component.css"
-  var css
-  if (nodes.style) {
-    let lang = checkLang(nodes.style) || 'css'
+  let css
+  if (nodes.styles) {
+    let lang = checkLang(nodes.styles) || 'css'
     s.prepend('import ' + JSON.stringify(id + '.component.' + lang) + '\n')
-    css = parse5.serialize(nodes.style)
+    css = nodes.styles.map((it) => {
+      return it.content
+    }).join('\n')
   }
 
   return {
@@ -50,24 +39,6 @@ export default function vueTransform (code, id) {
     map: s.generateMap({ hires: true }),
     css
   }
-}
-
-function toNodes (code) {
-  // Parse the file into an HTML tree
-  const fragment = parse5.parseFragment(code)
-
-  // Walk through the top level nodes and check for their types
-  const nodes = {}
-  for (let i = fragment.childNodes.length - 1; i >= 0; i--) {
-    nodes[fragment.childNodes[i].nodeName] = fragment.childNodes[i]
-  }
-
-  return nodes
-}
-
-function getExportOffset (s, scriptOffset) {
-  const script = scriptOffset > 0 ? s.original.substr(scriptOffset) : s.original
-  return scriptOffset + script.indexOf('{', script.search(/export default[^{]*\{/g)) + 1
 }
 
 /**
@@ -78,22 +49,8 @@ function getExportOffset (s, scriptOffset) {
  * @returns {string}
  */
 function injectTemplate (s, template, offset) {
-  const script = s.toString()
-
-  // There is no script tag
-  if (!script || script.length < 17) {
-    warn(script)
-    throw new Error('[rollup-plugin-vue2] could not find place to inject template in script.')
-  }
-
   // Compile template
-  template = parse5.serialize(template).replace(/&amp;&amp;/g, '&&')
   const compiled = compiler.compile(template)
-
-  // Show template compiler errors
-  if (template.errors) {
-    template.errors.forEach(warn)
-  }
 
   const renderFuncs = '\nrender: ' + toFunction(compiled.render) + ',' +
     '\nstaticRenderFns: [' + compiled.staticRenderFns.map(toFunction).join(',') + '],'
@@ -115,20 +72,17 @@ function toFunction (code) {
 }
 
 /**
- * Check the lang attribute of a parse5 node.
+ * Check the lang attribute node.
  *
  * @param {Node} node
  * @return {String|undefined}
  */
-function checkLang (node) {
-  if (node.attrs) {
-    let i = node.attrs.length
-    while (i--) {
-      const attr = node.attrs[i]
-      if (attr.name === 'lang') {
-        return attr.value
-      }
+function checkLang (nodes) {
+  let lang
+  nodes.map((it) => {
+    if (it.lang !== 'css') {
+      lang = it.lang
     }
-  }
-  return undefined
+  })
+  return lang
 }
