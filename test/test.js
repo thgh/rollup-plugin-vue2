@@ -27,7 +27,7 @@ describe('rollup-plugin-vue2', function () {
 
       // Script and template
       var expected = read('expects/bundle.js')
-      assertEqualFile(expected, result.code.replace(/\r/g, ''), 'should output script')
+      assertEqualFile(result.code, expected, 'should output script')
 
       // Styles
       var expectedCss = read('expects/bundle.css')
@@ -39,7 +39,7 @@ describe('rollup-plugin-vue2', function () {
     return simpleRollup('OnlyTemplate.vue').then(function (bundle) {
       var result = bundle.generate()
       var expected = read('expects/OnlyTemplate.js')
-      assertEqualFile(expected, result.code)
+      assertEqualFile(result.code, expected)
     })
   })
 
@@ -47,7 +47,7 @@ describe('rollup-plugin-vue2', function () {
     return simpleRollup('OnlyScript.vue').then(function (bundle) {
       var result = bundle.generate()
       var expected = read('expects/OnlyScript.js')
-      assertEqualFile(expected, result.code)
+      assertEqualFile(result.code, expected)
     })
   })
 
@@ -55,7 +55,7 @@ describe('rollup-plugin-vue2', function () {
     return simpleRollup('OnlyStyle.vue').then(function (bundle) {
       var result = bundle.generate()
       var expected = read('expects/OnlyStyle.js')
-      assertEqualFile(expected, result.code)
+      assertEqualFile(result.code, expected)
     })
   })
 
@@ -63,7 +63,7 @@ describe('rollup-plugin-vue2', function () {
     return simpleRollup('WithoutStyle.vue').then(function (bundle) {
       var result = bundle.generate()
       var expected = read('expects/WithoutStyle.js')
-      assertEqualFile(expected, result.code)
+      assertEqualFile(result.code, expected)
     })
   })
 
@@ -71,7 +71,7 @@ describe('rollup-plugin-vue2', function () {
     return simpleRollup('WithoutTemplate.vue').then(function (bundle) {
       var result = bundle.generate()
       var expected = read('expects/WithoutTemplate.js')
-      assertEqualFile(expected, result.code)
+      assertEqualFile(result.code, expected)
     })
   })
 
@@ -79,7 +79,15 @@ describe('rollup-plugin-vue2', function () {
     return simpleRollup('WithoutScript.vue').then(function (bundle) {
       var result = bundle.generate()
       var expected = read('expects/WithoutScript.js')
-      assertEqualFile(expected, result.code)
+      assertEqualFile(result.code, expected)
+    })
+  })
+
+  it('should handle components with src imports', function () {
+    return simpleRollup('SrcImport.vue').then(function (bundle) {
+      var result = bundle.generate()
+      var expected = read('expects/SrcImport.js')
+      assertEqualFile(result.code, expected)
     })
   })
 
