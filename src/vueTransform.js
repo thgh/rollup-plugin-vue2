@@ -9,10 +9,12 @@ export default function vueTransform (code, id) {
   let exportOffset = 0
   if (nodes.script) {
     if (nodes.script.src) {
-      let script = readFileSync(resolve(id, '..', nodes.script.src), 'utf8')
+      let script = readSrc(id, nodes.script.src)
       exportOffset = indexOfExport(script, 0)
-      s.overwrite(0, exportOffset, script.slice(0, exportOffset))
-      s.overwrite(exportOffset, code.length, script.slice(exportOffset))
+      if (exportOffset) {
+        s.overwrite(0, exportOffset, script.slice(0, exportOffset))
+        s.overwrite(exportOffset, code.length, script.slice(exportOffset))
+      }
     } else {
       s.remove(nodes.script.end, s.original.length)
       s.remove(0, nodes.script.start)
@@ -54,6 +56,15 @@ export default function vueTransform (code, id) {
   }
 }
 
+function readSrc (id, src) {
+  if (src.startsWith('./') || src.startsWith('/') || src.startsWith('../')) {
+    src = resolve(id, '..', src)
+  } else {
+    src = require.resolve(src)
+  }
+  return readFileSync(src, 'utf8')
+}
+
 function indexOfExport (code, start) {
   var match = /export\s+default\s+\{/.exec(code)
   if (match && match[0]) {
@@ -70,7 +81,7 @@ function indexOfExport (code, start) {
  * @returns {string}
  */
 function injectTemplate (s, node, offset, id) {
-  const t = node.src ? readFileSync(resolve(id, '..', node.src), 'utf8') : node.content
+  const t = node.src ? readSrc(id, node.src) : node.content
 
   // Compile template
   const compiled = compiler.compile(t)
