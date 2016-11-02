@@ -26,9 +26,10 @@ export default function vueTransform (code, id) {
     s.overwrite(0, 16, 'export default {')
     s.overwrite(16, code.length, '\nstub: 1\n}')
   }
+
   // Precompile and inject Vue template
-  if (nodes.template && nodes.template.content) {
-    injectTemplate(s, nodes.template.content, exportOffset)
+  if (nodes.template) {
+    injectTemplate(s, nodes.template, exportOffset, id)
   }
 
   // Import css as a module
@@ -68,9 +69,11 @@ function indexOfExport (code, start) {
  * @param template
  * @returns {string}
  */
-function injectTemplate (s, template, offset) {
+function injectTemplate (s, node, offset, id) {
+  const t = node.src ? readFileSync(resolve(id, '..', node.src), 'utf8') : node.content
+
   // Compile template
-  const compiled = compiler.compile(template)
+  const compiled = compiler.compile(t)
 
   const renderFuncs = '\nrender: ' + toFunction(compiled.render) + ',' +
     '\nstaticRenderFns: [' + compiled.staticRenderFns.map(toFunction).join(',') + '],'
