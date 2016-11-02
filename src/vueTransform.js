@@ -1,19 +1,27 @@
 import compiler from 'vue-template-compiler'
 import MagicString from 'magic-string'
+import { resolve } from 'path'
+import { readFileSync } from 'fs'
 
 export default function vueTransform (code, id) {
   const nodes = compiler.parseComponent(code)
   const s = new MagicString(code)
-  let exportOffset
+  let exportOffset = 0
   if (nodes.script) {
-    s.remove(nodes.script.end, s.original.length)
-    s.remove(0, nodes.script.start)
-    exportOffset = s.toString().search(/export default[^{]*\{/g)
-    if (exportOffset >= 0) {
-      exportOffset += nodes.script.start + 16
+    if (nodes.script.src) {
+      let script = readFileSync(resolve(id, '..', nodes.script.src), 'utf8')
+      exportOffset = indexOfExport(script, 0)
+      s.overwrite(0, exportOffset, script.slice(0, exportOffset))
+      s.overwrite(exportOffset, code.length, script.slice(exportOffset))
+    } else {
+      s.remove(nodes.script.end, s.original.length)
+      s.remove(0, nodes.script.start)
+      exportOffset = indexOfExport(s.toString(), nodes.script.start)
     }
   }
-  if (!(exportOffset > 16)) {
+
+  // The script cannot be valid so let's overwrite it
+  if (exportOffset < 15) {
     exportOffset = 16
     s.overwrite(0, 16, 'export default {')
     s.overwrite(16, code.length, '\nstub: 1\n}')
@@ -43,6 +51,14 @@ export default function vueTransform (code, id) {
     map: s.generateMap({ hires: true }),
     css
   }
+}
+
+function indexOfExport (code, start) {
+  var match = /export\s+default\s+\{/.exec(code)
+  if (match && match[0]) {
+    return match.index + match[0].length + start
+  }
+  return 0
 }
 
 /**
