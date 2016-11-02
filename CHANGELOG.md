@@ -5,7 +5,7 @@ All notable changes to `rollup-plugin-vue2` will be documented in this file.
 ## [Unreleased]
 
 ## [0.4.0] - 2016-11-02
-### Changed
+### Added
 - Support for src imports
 
 ## [0.3.0] - 2016-11-01
