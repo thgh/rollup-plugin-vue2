@@ -4,12 +4,10 @@ import vueTransform from './vueTransform'
 export default function vue2 (options = {}) {
   const filter = createFilter(options.include || '**/*.vue', options.exclude)
   const styles = {}
+  const scripts = {} // catch Vue render functions
 
   return {
     name: 'vue2',
-    options (options) {
-      options.useStrict = false
-    },
     resolveId (id) {
       if (id.indexOf('.vue.component.') !== -1) {
         return id
@@ -29,7 +27,7 @@ export default function vue2 (options = {}) {
         return
       }
 
-      code = vueTransform(code, id)
+      code = vueTransform(code, id, scripts)
 
       // Map of every stylesheet
       styles[id] = code.css
@@ -37,8 +35,8 @@ export default function vue2 (options = {}) {
       return code
     },
     ongenerate (opts, rendered) {
-      // Revert "with(this){"
-      rendered.code = rendered.code.replace(/if\s*\(window.__VUE_WITH__\)/g, 'with(this)')
+      // Revert "render" function, the code should not be process by rollup
+      rendered.code = rendered.code.replace(/__VUE_ID__:"(.[^"]+)",/g, (_, id) => scripts[JSON.parse('"' + id + '"')])
     }
   }
 }
