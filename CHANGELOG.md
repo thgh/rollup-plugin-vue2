@@ -36,7 +36,7 @@ All notable changes to `rollup-plugin-vue2` will be documented in this file.
 - Use vue-template-compiler to compile *.vue files.
 
 [Unreleased]: https://github.com/thgh/rollup-plugin-vue2/compare/v0.4.0...HEAD
-[0.3.0]: https://github.com/thgh/rollup-plugin-vue2/compare/v0.3.0...v0.4.0
+[0.4.0]: https://github.com/thgh/rollup-plugin-vue2/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/thgh/rollup-plugin-vue2/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/thgh/rollup-plugin-vue2/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/thgh/rollup-plugin-vue2/compare/v0.0.8...v0.1.0
