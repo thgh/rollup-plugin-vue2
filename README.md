@@ -7,7 +7,6 @@ __&checkmark;__ Fastest bundle by __precompiling templates__ with [vue-template-
 __&checkmark;__ [Let's see the example config](#usage)
  
 __&cross;__ No support for vue-hot-reload-api (help needed)  
-__&cross;__ No support for css compilation, but can trigger another build tool
 
 <a href="LICENSE">
   <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg" alt="Software License" />
@@ -32,9 +31,9 @@ npm install --save-dev rollup-plugin-vue2
 
 **Warning**: rollup-plugin-vue2 will transform the style tags to imports. You need one of these plugins to handle these:
 
+- [rollup-plugin-scss]
 - [rollup-plugin-css-only]
 - [rollup-plugin-postcss]
-- [rollup-plugin-sass]
 
 ## Usage
 Put `vue()` before any transpiler like Bublé or Babel
@@ -50,6 +49,7 @@ import uglify from 'rollup-plugin-uglify';
 export default {
   entry: 'src/main.js',
   dest: 'dist/bundle.js',
+  sourcemaps: true,
   plugins: [
     vue(),
     css(),
@@ -122,7 +122,7 @@ The MIT License (MIT). Please see [License File](LICENSE) for more information.
 [rollup-plugin-vue2]: https://www.npmjs.com/package/rollup-plugin-vue2
 [rollup-plugin-css-only]: https://www.npmjs.com/package/rollup-plugin-css-only
 [rollup-plugin-postcss]: https://www.npmjs.com/package/rollup-plugin-postcss
-[rollup-plugin-sass]: https://www.npmjs.com/package/rollup-plugin-sass
+[rollup-plugin-scss]: https://www.npmjs.com/package/rollup-plugin-scss
 [rollup-plugin-buble]: https://www.npmjs.com/package/rollup-plugin-buble
 [rollup-plugin-babel]: https://www.npmjs.com/package/rollup-plugin-babel
 [vue-template-compiler]: https://www.npmjs.com/package/vue-template-compiler
