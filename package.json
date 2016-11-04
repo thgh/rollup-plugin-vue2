@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-vue2",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Rollup plugin for Vue 2.0 components",
   "main": "dist/rollup-plugin-vue2.common.js",
   "jsnext": "dist/rollup-plugin-vue2.es.js",

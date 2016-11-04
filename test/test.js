@@ -116,7 +116,7 @@ function assertEqualFile (a, b, c) {
   return assert.equal(a.replace(/\r/g, ''), b.replace(/\r/g, ''), c)
 }
 
-// Assert equal except for line endings
+// Rollup with basic config and no css output
 function simpleRollup (fixture) {
   return rollup.rollup({
     format: 'cjs',

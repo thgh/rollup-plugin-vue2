@@ -4,13 +4,17 @@ All notable changes to `rollup-plugin-vue2` will be documented in this file.
 
 ## [Unreleased]
 
+## [0.5.0] - 2016-11-04
+### Changed
+- #5 Freeze render methods to avoid renamed methods
+
 ## [0.4.0] - 2016-11-02
 ### Added
-- Support for src imports
+- #2 Support for src imports
 
 ## [0.3.0] - 2016-11-01
 ### Changed
-- Replace parse5 by vue-template-compiler from [jetiny](https://github.com/jetiny).
+- #4 Replace parse5 by vue-template-compiler from [jetiny](https://github.com/jetiny).
 
 ## [0.2.0] - 2016-09-30
 ### Added
@@ -28,7 +32,7 @@ All notable changes to `rollup-plugin-vue2` will be documented in this file.
 - Try fixing compatibility with uglifyjs.
 
 ### Removed
-- Option `css` is removed. Styles are transformed into an `import` statement.
+- #1 Option `css` is removed. Styles are transformed into an `import` statement.
 
 ## [0.0.1] - 2016-08-23
 ### Added
