@@ -3,7 +3,7 @@ import MagicString from 'magic-string'
 import { resolve } from 'path'
 import { readFileSync } from 'fs'
 
-export default function vueTransform (code, id) {
+export default function vueTransform (code, id, scripts) {
   const nodes = compiler.parseComponent(code)
   const s = new MagicString(code)
   let exportOffset = 0
@@ -31,7 +31,7 @@ export default function vueTransform (code, id) {
 
   // Precompile and inject Vue template
   if (nodes.template) {
-    injectTemplate(s, nodes.template, exportOffset, id)
+    scripts[id] = injectTemplate(s, nodes.template, exportOffset, id)
   }
 
   // Import css as a module
@@ -92,7 +92,10 @@ function injectTemplate (s, node, offset, id) {
   // Inject render function
   // Replace "with(this){" with something that works in strict mode
   // https://github.com/vuejs/vue-template-es2015-compiler/blob/master/index.js
-  s.insertLeft(offset, renderFuncs.replace(/with\(this\)/g, 'if(window.__VUE_WITH__)'))
+  s.insertLeft(offset, '__VUE_ID__:' + JSON.stringify(id) + ',')
+  // s.insertLeft(offset, renderFuncs.replace(/with\(this\)/g, 'if(window.__VUE_WITH__)'))
+
+  return renderFuncs
 }
 
 /**
