@@ -1,4 +1,5 @@
 import compiler from 'vue-template-compiler'
+import transpile from 'vue-template-es2015-compiler'
 import MagicString from 'magic-string'
 import { resolve } from 'path'
 import { readFileSync } from 'fs'
@@ -30,6 +31,7 @@ export default function vueTransform (code, id, scripts) {
   }
 
   // Precompile and inject Vue template
+
   if (nodes.template) {
     scripts[id] = injectTemplate(s, nodes.template, exportOffset, id)
   }
@@ -85,16 +87,14 @@ function injectTemplate (s, node, offset, id) {
 
   // Compile template
   const compiled = compiler.compile(t)
-
-  const renderFuncs = '\nrender: ' + toFunction(compiled.render) + ',' +
-    '\nstaticRenderFns: [' + compiled.staticRenderFns.map(toFunction).join(',') + '],'
-
+  const renderFuncs = '\nrender: ' + transpile(`function render(){${compiled.render}}`) + ',' +
+    '\nstaticRenderFns: ' + transpile(`[${compiled.staticRenderFns.map(toFunction).join(',')}]`) + ','
   // Inject render function
   // Replace "with(this){" with something that works in strict mode
   // https://github.com/vuejs/vue-template-es2015-compiler/blob/master/index.js
-  s.insertLeft(offset, '__VUE_ID__:' + JSON.stringify(id) + ',')
+  // s.insertLeft(offset, '__VUE_ID__:' + JSON.stringify(id) + ',')
   // s.insertLeft(offset, renderFuncs.replace(/with\(this\)/g, 'if(window.__VUE_WITH__)'))
-
+  s.insertLeft(offset, renderFuncs)
   return renderFuncs
 }
 

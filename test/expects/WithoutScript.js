@@ -1,6 +1,6 @@
 var WithoutScript = {
-render: function(){with(this){return _m(0)}},
-staticRenderFns: [function(){with(this){return _h('div',["Component without script"])}}],
+render: function render(){var _vm=this;var _h=_vm.$createElement;return _vm._m(0)},
+staticRenderFns: [function(){var _vm=this;var _h=_vm.$createElement;return _h('div',["Component without script"])}],
 stub: 1
 };
 
