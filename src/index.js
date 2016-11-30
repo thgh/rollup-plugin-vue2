@@ -33,10 +33,6 @@ export default function vue2 (options = {}) {
       styles[id] = code.css
 
       return code
-    },
-    ongenerate (opts, rendered) {
-      // Revert "render" function, the code should not be process by rollup
-      // rendered.code = rendered.code.replace(/__VUE_ID__:"(.[^"]+)",/g, (_, id) => scripts[JSON.parse('"' + id + '"')])
     }
   }
 }
