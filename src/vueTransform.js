@@ -31,7 +31,6 @@ export default function vueTransform (code, id, scripts) {
   }
 
   // Precompile and inject Vue template
-
   if (nodes.template) {
     scripts[id] = injectTemplate(s, nodes.template, exportOffset, id)
   }
@@ -87,8 +86,8 @@ function injectTemplate (s, node, offset, id) {
 
   // Compile template
   const compiled = compiler.compile(t)
-  const renderFuncs = '\nrender: ' + transpile(`function render(){${compiled.render}}`) + ',' +
-    '\nstaticRenderFns: ' + transpile(`[${compiled.staticRenderFns.map(toFunction).join(',')}]`) + ','
+  const renderFuncs = '\nrender: ' + toFunction(compiled.render) + ',' +
+    '\nstaticRenderFns: [' + compiled.staticRenderFns.map(toFunction).join(',') + '],'
   // Inject render function
   // Replace "with(this){" with something that works in strict mode
   // https://github.com/vuejs/vue-template-es2015-compiler/blob/master/index.js
@@ -105,7 +104,7 @@ function injectTemplate (s, node, offset, id) {
  * @return {String}
  */
 function toFunction (code) {
-  return 'function(){' + code + '}'
+  return transpile('(function(){' + code + '})').slice(1, -1)
 }
 
 /**

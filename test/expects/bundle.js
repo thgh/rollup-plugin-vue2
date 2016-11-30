@@ -1,5 +1,5 @@
 var Hello = {
-render: function render(){var _vm=this;var _h=_vm.$createElement;return _h('h1',{on:{"click":_vm.log}},["Hello "+_vm._s(_vm.name)])},
+render: function(){var _vm=this;var _h=_vm.$createElement;return _h('h1',{on:{"click":_vm.log}},["Hello "+_vm._s(_vm.name)])},
 staticRenderFns: [],
   props: ['name'],
   methods: {
@@ -10,7 +10,7 @@ staticRenderFns: [],
 };
 
 var App = {
-render: function render(){var _vm=this;var _h=_vm.$createElement;return _h('main',[(_vm.uid && _vm.name)?_h('hello',{attrs:{"name":_vm.name}},[_vm._s(_vm.uid && _vm.name)]):_vm._e()])},
+render: function(){var _vm=this;var _h=_vm.$createElement;return _h('main',[(_vm.uid && _vm.name)?_h('hello',{attrs:{"name":_vm.name}},[_vm._s(_vm.uid && _vm.name)]):_vm._e()])},
 staticRenderFns: [],
   props: ['name'],
   components: {
