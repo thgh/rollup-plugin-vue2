@@ -92,10 +92,6 @@ npm run lint
 npm run test
 ```
 
-### Strict mode disabled
-
-By default, [strict mode is enabled](https://github.com/rollup/rollup/search?utf8=%E2%9C%93&q=%22options.useStrict%22&type=Code) in Rollup. [vue-template-compiler] uses `with` so cannot run in strict mode. That's why rollup-plugin-vue2 always [disables strict mode](https://github.com/thgh/rollup-plugin-vue2/search?utf8=%E2%9C%93&q=%22options.useStrict%22&type=Code).
-
 ## Contributing
 
 Contributions and feedback are very welcome.
