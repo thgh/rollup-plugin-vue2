@@ -4,6 +4,10 @@ All notable changes to `rollup-plugin-vue2` will be documented in this file.
 
 ## [Unreleased]
 
+## [0.6.0] - 2016-11-30
+### Changed
+- #7 Strip `with` by transpiling render methods
+
 ## [0.5.0] - 2016-11-04
 ### Changed
 - #5 Freeze render methods to avoid renamed methods
