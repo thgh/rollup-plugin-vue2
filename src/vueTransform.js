@@ -88,7 +88,7 @@ function injectTemplate (s, node, offset, id) {
   const compiled = compiler.compile(t)
   const renderFuncs = '\nrender: ' + toFunction(compiled.render) + ',' +
     '\nstaticRenderFns: [' + compiled.staticRenderFns.map(toFunction).join(',') + '],'
-  s.insertLeft(offset, renderFuncs)
+  s.appendLeft(offset, renderFuncs)
   return renderFuncs
 }
 
