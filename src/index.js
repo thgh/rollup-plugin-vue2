@@ -20,7 +20,7 @@ export default function vue2 (options = {}) {
       }
     },
     transform (code, id) {
-      if (id.endsWith('vue.common.js')) {
+      if (id.endsWith('vue.common.js') || id.endsWith('vue.runtime.common.js')) {
         return vueCommon(code)
       }
       if (!filter(id)) {
