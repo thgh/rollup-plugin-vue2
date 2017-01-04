@@ -1,6 +1,6 @@
 /* global describe, it */
 var vue = require('../')
-var css = require('rollup-plugin-css-only')['default']
+var css = require('rollup-plugin-css-only')
 var assert = require('assert')
 var fs = require('fs')
 var rollup = require('rollup')

@@ -18,8 +18,8 @@ export default {
   },
 
   // Cleaner console
-  onwarn (msg) {
-    if (msg && msg.startsWith('Treating')) {
+  onwarn (warning) {
+    if (warning && warning.message.startsWith('Treating')) {
       return
     }
   }

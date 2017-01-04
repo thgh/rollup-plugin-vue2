@@ -14,7 +14,7 @@ function noop$1() {
 
 noop();
 	var WithoutRollupRender = {
-render: function(){var _vm=this;var _h=_vm.$createElement;return _h('span',{on:{"click":_vm.method}},["METHOD"])},
+render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',{on:{"click":_vm.method}},[_vm._v("METHOD")])},
 staticRenderFns: [],
 		methods: {
 			method: method$1,
