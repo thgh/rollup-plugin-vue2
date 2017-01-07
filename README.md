@@ -1,4 +1,8 @@
-# Rollup plugin for Vue 2.0
+### Check first if [rollup-plugin-vue] works for you, it also supports Vue 2 and it's better maintained!
+
+> The repository you are looking at is not actively maintained and boils down to a subset of [rollup-plugin-vue].
+
+# Rollup plugin for Vue 2
 
 ### Transform .vue components & precompile templates
 
