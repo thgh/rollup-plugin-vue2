@@ -19,7 +19,8 @@ export default {
 
   // Cleaner console
   onwarn (warning) {
-    if (warning && warning.message.startsWith('Treating')) {
+    warning = warning && warning.message || warning || ''
+    if (warning.startsWith('Treating')) {
       return
     }
   }
