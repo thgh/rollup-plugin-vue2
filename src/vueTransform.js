@@ -39,15 +39,17 @@ export default function vueTransform (code, id, scripts) {
   // Example: import "./src/App.vue.component.css"
   let css
   if (nodes.styles) {
-    if (nodes.styles.src) {
-      s.prepend('import ' + JSON.stringify(nodes.styles.src) + '\n')
-    } else {
-      let lang = checkLang(nodes.styles) || 'css'
-      s.prepend('import ' + JSON.stringify(id + '.component.' + lang) + '\n')
-      css = nodes.styles.map((it) => {
-        return it.content
-      }).join('\n')
-    }
+    nodes.styles.forEach(style => {
+      if (style.src) {
+        s.prepend('import ' + JSON.stringify(style.src) + '\n')
+      } else {
+        let lang = checkLang(style) || 'css'
+        s.prepend('import ' + JSON.stringify(id + '.component.' + lang) + '\n')
+        css = style.map((it) => {
+          return it.content
+        }).join('\n')
+      }
+    })
   }
 
   return {
