@@ -79,17 +79,31 @@ function vueTransform (code, id) {
 
   // Precompile and inject Vue template
   if (nodes.template) {
-    let renderMixins = []
+    let componentMixins = []
     if (nodes.customBlocks) {
       nodes.customBlocks.forEach((block) => {
         if (block.type === 'component' && block.attrs.name) {
           let render = compileToFunctions(block.content)
-          render.name = block.attrs.name
-          renderMixins.push(render)
+          let exportGlobal = !!('export' in block.attrs)
+          if (exportGlobal) {
+            exportGlobal = `
+  export: true,`
+          } else {
+            exportGlobal = ''
+          }
+          let mixinText = `{
+  name: '${block.attrs.name}',${exportGlobal}
+  render: ${render.render},
+  staticRenderFns: ${render.staticRenderFns},
+}`
+          componentMixins.push(mixinText)
         }
       })
     }
-    injectTemplate(s, nodes.template, exportOffset, id, renderMixins)
+    if (componentMixins.length) {
+      componentMixins = '[' + componentMixins.join(',') + ']'
+    }
+    injectTemplate(s, nodes.template, exportOffset, id, componentMixins)
   }
 
   // Import css as a module
@@ -138,15 +152,15 @@ function indexOfExport (code, start) {
  * @param template
  * @returns {string}
  */
-function injectTemplate (s, node, offset, id, renderMixins) {
+function injectTemplate (s, node, offset, id, componentMixins) {
   const t = node.src ? readSrc(id, node.src) : node.content
 
   // Compile template
   const compiled = compileToFunctions(t)
   let renderFuncs = '\nrender: ' + compiled.render + ',' +
     '\nstaticRenderFns: ' + compiled.staticRenderFns + ','
-  if (renderMixins.length) {
-    renderFuncs += 'renderMixins:' + JSON.stringify(renderMixins) + ','
+  if (componentMixins.length) {
+    renderFuncs += '\ncomponentMixins: ' + componentMixins + ','
   }
   s.appendLeft(offset, renderFuncs)
   return renderFuncs
