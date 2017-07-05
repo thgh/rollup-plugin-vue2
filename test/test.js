@@ -99,6 +99,15 @@ describe('rollup-plugin-vue2', function () {
     })
   })
 
+  it('should rollup component templates', function () {
+    return simpleRollup('componentRenders.vue').then(function (bundle) {
+      var result = bundle.generate({ format: 'es' })
+      console.log(result)
+      // var expected = read('expects/WithoutRollupRender.js')
+      // assertEqualFile(result.code, expected)
+    })
+  })
+
   // it('should fail to bundle components with template tag & render function', function () {
   //   assert.throws(
   //     () => simpleRollup('ConflictRender.vue'),

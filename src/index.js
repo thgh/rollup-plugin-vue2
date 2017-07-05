@@ -8,7 +8,6 @@ import { readFileSync } from 'fs'
 export default function vue2 (options = {}) {
   const filter = createFilter(options.include || '**/*.vue', options.exclude)
   const styles = {}
-  const scripts = {} // catch Vue render functions
 
   return {
     name: 'vue2',
@@ -31,7 +30,7 @@ export default function vue2 (options = {}) {
         return
       }
 
-      code = vueTransform(code, id, scripts)
+      code = vueTransform(code, id)
 
       // Map of every stylesheet
       styles[id] = code.css
@@ -52,7 +51,7 @@ function vueCommon (code) {
   }
 }
 
-function vueTransform (code, id, scripts) {
+function vueTransform (code, id) {
   const nodes = compiler.parseComponent(code)
   const s = new MagicString(code)
   let exportOffset = 0
@@ -80,7 +79,17 @@ function vueTransform (code, id, scripts) {
 
   // Precompile and inject Vue template
   if (nodes.template) {
-    scripts[id] = injectTemplate(s, nodes.template, exportOffset, id)
+    let renderMixins = []
+    if (nodes.customBlocks) {
+      nodes.customBlocks.forEach((block) => {
+        if (block.type === 'component' && block.attrs.name) {
+          let render = compileToFunctions(block.content)
+          render.name = block.attrs.name
+          renderMixins.push(render)
+        }
+      })
+    }
+    injectTemplate(s, nodes.template, exportOffset, id, renderMixins)
   }
 
   // Import css as a module
@@ -129,15 +138,26 @@ function indexOfExport (code, start) {
  * @param template
  * @returns {string}
  */
-function injectTemplate (s, node, offset, id) {
+function injectTemplate (s, node, offset, id, renderMixins) {
   const t = node.src ? readSrc(id, node.src) : node.content
 
   // Compile template
-  const compiled = compiler.compile(t)
-  const renderFuncs = '\nrender: ' + toFunction(compiled.render) + ',' +
-    '\nstaticRenderFns: [' + compiled.staticRenderFns.map(toFunction).join(',') + '],'
+  const compiled = compileToFunctions(t)
+  let renderFuncs = '\nrender: ' + compiled.render + ',' +
+    '\nstaticRenderFns: ' + compiled.staticRenderFns + ','
+  if (renderMixins.length) {
+    renderFuncs += 'renderMixins:' + JSON.stringify(renderMixins) + ','
+  }
   s.appendLeft(offset, renderFuncs)
   return renderFuncs
+}
+
+function compileToFunctions (template) {
+  let compiled = compiler.compile(template)
+  return {
+    render: toFunction(compiled.render),
+    staticRenderFns: '[' + compiled.staticRenderFns.map(toFunction).join(',') + ']'
+  }
 }
 
 /**
