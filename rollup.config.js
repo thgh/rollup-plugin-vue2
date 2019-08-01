@@ -4,12 +4,19 @@ const pack = require('./package.json')
 const YEAR = new Date().getFullYear()
 
 export default {
-  entry: 'src/index.js',
-  dest: 'dist/rollup-plugin-vue2.common.js',
-  plugins: [
-    buble()
+  input: 'src/index.js',
+  output: [
+    {
+      file: 'dist/rollup-plugin-vue2.common.js',
+      format: 'cjs'
+    },
+    {
+      file: 'dist/rollup-plugin-vue2.es.js',
+      format: 'esm'
+    }
   ],
-  banner   () {
+  plugins: [buble()],
+  banner () {
     return `/*!
  * ${pack.name} v${pack.version}
  * (c) ${YEAR} ${pack.author}
@@ -19,9 +26,9 @@ export default {
 
   // Cleaner console
   onwarn (warning) {
-    warning = warning && warning.message || warning || ''
+    warning = (warning && warning.message) || warning || ''
     if (warning.startsWith('Treating')) {
-      return
+
     }
   }
 }

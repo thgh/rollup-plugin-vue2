@@ -1,19 +1,18 @@
 /* global describe, it */
-var vue = require('../')
-var css = require('rollup-plugin-css-only')
-var assert = require('assert')
-var fs = require('fs')
-var rollup = require('rollup')
-var path = require('path')
+const vue = require('../')
+const css = require('rollup-plugin-css-only')
+const assert = require('assert')
+const fs = require('fs')
+const rollup = require('rollup')
+const path = require('path')
 
 process.chdir(__dirname)
 
 describe('rollup-plugin-vue2', function () {
   it('should rollup entry.js', function () {
-    var actualCss = ''
+    let actualCss = ''
     return rollup.rollup({
-      format: 'cjs',
-      entry: './fixtures/entry.js',
+      input: './fixtures/entry.js',
       plugins: [
         vue(),
         css({
@@ -22,79 +21,78 @@ describe('rollup-plugin-vue2', function () {
           }
         })
       ]
-    }).then(function (bundle) {
-      var result = bundle.generate({ format: 'es' })
-
+    }).then(async (bundle) => {
+      const { output: [result] } = await bundle.generate({ format: 'es' })
       // Script and template
-      var expected = read('expects/bundle.js')
+      const expected = read('expects/bundle.js')
       assertEqualFile(result.code, expected, 'should output script')
 
       // Styles
-      var expectedCss = read('expects/bundle.css')
+      const expectedCss = read('expects/bundle.css')
       assertEqualFile(expectedCss, actualCss, 'should output style')
     })
   })
 
   it('should handle components with only template', function () {
-    return simpleRollup('OnlyTemplate.vue').then(function (bundle) {
-      var result = bundle.generate({ format: 'es' })
-      var expected = read('expects/OnlyTemplate.js')
+    return simpleRollup('OnlyTemplate.vue').then(async function (bundle) {
+      const { output: [result] } = await bundle.generate({ format: 'es' })
+      const expected = read('expects/OnlyTemplate.js')
       assertEqualFile(result.code, expected)
     })
   })
 
   it('should handle components with only script', function () {
-    return simpleRollup('OnlyScript.vue').then(function (bundle) {
-      var result = bundle.generate({ format: 'es' })
-      var expected = read('expects/OnlyScript.js')
+    return simpleRollup('OnlyScript.vue').then(async function (bundle) {
+      const { output: [result] } = await bundle.generate({ format: 'es' })
+      const expected = read('expects/OnlyScript.js')
       assertEqualFile(result.code, expected)
     })
   })
 
   it('should handle components with only style', function () {
-    return simpleRollup('OnlyStyle.vue').then(function (bundle) {
-      var result = bundle.generate({ format: 'es' })
-      var expected = read('expects/OnlyStyle.js')
+    return simpleRollup('OnlyStyle.vue').then(async function (bundle) {
+      const { output: [result] } = await bundle.generate({ format: 'es' })
+      const expected = read('expects/OnlyStyle.js')
       assertEqualFile(result.code, expected)
     })
   })
 
   it('should handle components without style', function () {
-    return simpleRollup('WithoutStyle.vue').then(function (bundle) {
-      var result = bundle.generate({ format: 'es' })
-      var expected = read('expects/WithoutStyle.js')
+    return simpleRollup('WithoutStyle.vue').then(async function (bundle) {
+      const { output: [result] } = await bundle.generate({ format: 'es' })
+      const expected = read('expects/WithoutStyle.js')
       assertEqualFile(result.code, expected)
     })
   })
 
   it('should handle components without template', function () {
-    return simpleRollup('WithoutTemplate.vue').then(function (bundle) {
-      var result = bundle.generate({ format: 'es' })
-      var expected = read('expects/WithoutTemplate.js')
+    return simpleRollup('WithoutTemplate.vue').then(async function (bundle) {
+      const { output: [result] } = await bundle.generate({ format: 'es' })
+      const expected = read('expects/WithoutTemplate.js')
       assertEqualFile(result.code, expected)
     })
   })
 
   it('should handle components without script', function () {
-    return simpleRollup('WithoutScript.vue').then(function (bundle) {
-      var result = bundle.generate({ format: 'es' })
-      var expected = read('expects/WithoutScript.js')
+    return simpleRollup('WithoutScript.vue').then(async function (bundle) {
+      const { output: [result] } = await bundle.generate({ format: 'es' })
+      const expected = read('expects/WithoutScript.js')
       assertEqualFile(result.code, expected)
     })
   })
 
   it('should handle components with src imports', function () {
-    return simpleRollup('SrcImport.vue').then(function (bundle) {
-      var result = bundle.generate({ format: 'es' })
-      var expected = read('expects/SrcImport.js')
+    return simpleRollup('SrcImport.vue').then(async function (bundle) {
+      const { output: [result] } = await bundle.generate({ format: 'es' })
+      const expected = read('expects/SrcImport.js')
       assertEqualFile(result.code, expected)
     })
   })
 
   it('should not rollup render methods', function () {
-    return simpleRollup('WithoutRollupRender.vue').then(function (bundle) {
-      var result = bundle.generate({ format: 'es' })
-      var expected = read('expects/WithoutRollupRender.js')
+    return simpleRollup('WithoutRollupRender.vue').then(async function (bundle) {
+      const { output: [result] } = await bundle.generate({ format: 'es' })
+      const expected = read('expects/WithoutRollupRender.js')
       assertEqualFile(result.code, expected)
     })
   })
@@ -113,14 +111,13 @@ function read (file) {
 
 // Assert equal except for line endings
 function assertEqualFile (a, b, c) {
-  return assert.equal(a.replace(/\r/g, ''), b.replace(/\r/g, ''), c)
+  return assert.strictEqual(a.replace(/\r/g, ''), b.replace(/\r/g, ''), c)
 }
 
 // Rollup with basic config and no css output
 function simpleRollup (fixture) {
   return rollup.rollup({
-    format: 'cjs',
-    entry: './fixtures/' + fixture,
+    input: './fixtures/' + fixture,
     plugins: [
       vue(),
       css({ output: false })

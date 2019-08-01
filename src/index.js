@@ -58,7 +58,7 @@ function vueTransform (code, id, scripts) {
   let exportOffset = 0
   if (nodes.script) {
     if (nodes.script.src) {
-      let script = readSrc(id, nodes.script.src)
+      const script = readSrc(id, nodes.script.src)
       exportOffset = indexOfExport(script, 0)
       if (exportOffset) {
         s.overwrite(0, exportOffset, script.slice(0, exportOffset))
@@ -91,7 +91,7 @@ function vueTransform (code, id, scripts) {
       if (style.src) {
         s.prepend('import ' + JSON.stringify(style.src) + '\n')
       } else {
-        let lang = style.lang || 'css'
+        const lang = style.lang || 'css'
         s.prepend('import ' + JSON.stringify(id + '.component.' + lang) + '\n')
         css = (css || '') + style.content
       }
